@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-time GPS Tracker</title>
+  <style>
+    #map {
+      height: 500px;
+      width: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+  <h1>Real-time GPS Tracker</h1>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([0, 0], 2); // Default map view
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    const marker = L.marker([0, 0]).addTo(map);
+
+    async function fetchLocation() {
+      const response = await fetch('/location');
+      const data = await response.json();
+
+      if (data.latitude && data.longitude) {
+        const latLng = [data.latitude, data.longitude];
+        marker.setLatLng(latLng);
+        map.setView(latLng, 15);
+      }
+    }
+
+    setInterval(fetchLocation, 1000); // Update every second
+  </script>
+</body>
+</html>
